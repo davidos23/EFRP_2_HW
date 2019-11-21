@@ -6,7 +6,8 @@ return_maker <- function(WTI_fut)
   ##the first column remains the same as it is our date vector, and the first row is empty as we don't have data before the first day
   ## -!-this function is copied from out pprevious work because this code calculated the correlation with prices
   ## in this code i have changed ret_WTI_fut output name to WTI2 because this is the basic parameter in the original code
-  #this function imports the dataset as well
+  #this function imports the dataset as well 
+  #random rtext
   WTI_fut <- readxl::read_excel("WTI2.xlsx")
   n <- nrow(WTI_fut)
   m <- ncol(WTI_fut)
