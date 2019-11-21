@@ -70,10 +70,11 @@ calculate_correlation <-
   function(ablak_meret = 100,
            kesleltet = 0,
            the_data = WTI2) {  
-    vegso=nrow(WTI2)-1 #-1 as one column kept for the date vector 
-    kezdo_datum_num=as.numeric(kezdo_datum-adat_kezdo)
+    vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector 
+    kezdo_datum_num=as.numeric(as.Date(kezdo_datum))-as.numeric(as.Date(adat_kezdo))
     #insert adat_kezdo as i forgot it
     m<- vegso - ablak_meret-kezdo_datum_num
+    n <- ncol(WTI2)-1
     CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]  
     pairedCorrelation=matrix(nrow=m,ncol=CorMatrixCol)
     z=2
