@@ -18,10 +18,11 @@ return_maker <- function(WTI_fut)
       ret_WTI_fut[i,j] <- (WTI_fut[[i,j]] / WTI_fut[[i-1,j]]) - 1
     }
   }
-  
+  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a détumot berakja a ret elé, de lesz egy ures oszlop
   ret_WTI_fut <- cbind(WTI_fut[,1], ret_WTI_fut)
-  WTI2 <<- ret_WTI_fut[-1,-2]
+  WTI2 <<- data.frame(ret_WTI_fut[-1,-2])
   colnames(WTI2) = colnames(WTI_fut)
+  adat_kezdo<<-WTI2[1,1]
   # View(ret_WTI_fut)
   return(WTI2)
 }
@@ -35,14 +36,14 @@ check_parameters <-
   function(kezdo_datum,
            kesleltet,
            ablak_meret) {
-    adat_kezdo=WTI2[1,1]
+    
     # check the type of the start date
-    if (typeof(kezdo_datum) != "double") {
-      print("Karakter formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
+    if (typeof(kezdo_datum) != "character") {
+      print("Character formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
       
       # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
-    } else if (kezdo_datum < adat_kezdo ) {
+    } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
         paste(
           "Kérjük olyan dátumot adjon meg, ami az elemzés intervallumába beleesik:"
@@ -70,7 +71,7 @@ calculate_correlation <-
            kesleltet = 0,
            the_data = WTI2) {  
     vegso=nrow(WTI2)-1 #-1 as one column kept for the date vector 
-    kezdo_datum_num=as.numeric(adat_kezdo-kezdo_datum)
+    kezdo_datum_num=as.numeric(kezdo_datum-adat_kezdo)
     #insert adat_kezdo as i forgot it
     m<- vegso - ablak_meret-kezdo_datum_num
     CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]  
