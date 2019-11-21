@@ -7,7 +7,6 @@ return_maker <- function(WTI_fut)
   ## -!-this function is copied from out pprevious work because this code calculated the correlation with prices
   ## in this code i have changed ret_WTI_fut output name to WTI2 because this is the basic parameter in the original code
   #this function imports the dataset as well 
-  #random rtext
   WTI_fut <- readxl::read_excel("WTI2.xlsx")
   n <- nrow(WTI_fut)
   m <- ncol(WTI_fut)
@@ -27,13 +26,17 @@ return_maker <- function(WTI_fut)
   return(WTI2)
 }
 
+add_parameters <- function(startDate,kesleltet,ablak_meret){
+  kezdo_datum  <<- starDate
+  kesleltet <<- kesleltet
+  ablak_meret <<- ablak_meret
+}
 check_parameters <-
-  function(adat_kezdo,
-           adat_vegso,
-           kezdo_datum,
+  function(kezdo_datum,
            kesleltet,
            ablak_meret) {
-    # Leellenőrizzük, hogy karakter formátumokba kaptuk-e a kezdő dátumot
+    adat_kezdo=WTI2[1,1]
+    # check the type of the start date
     if (typeof(kezdo_datum) != "double") {
       print("Karakter formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
@@ -68,6 +71,7 @@ calculate_correlation <-
            the_data = WTI2) {  
     vegso=nrow(WTI2)-1 #-1 as one column kept for the date vector 
     kezdo_datum_num=as.numeric(adat_kezdo-kezdo_datum)
+    #insert adat_kezdo as i forgot it
     m<- vegso - ablak_meret-kezdo_datum_num
     CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]  
     pairedCorrelation=matrix(nrow=m,ncol=CorMatrixCol)
