@@ -28,7 +28,7 @@ return_maker <- function(WTI_fut)
 }
 
 add_parameters <- function(startDate,kesleltet,ablak_meret){
-  kezdo_datum  <<- starDate
+  kezdo_datum  <<- startDate
   kesleltet <<- kesleltet
   ablak_meret <<- ablak_meret
 }
@@ -59,7 +59,7 @@ check_parameters <-
       
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
-      print("Kérjük megfelelő intevallumban adja meg a paramétereket (pl. a késleltetés ne legyen negatív).")
+      print("Negatív a késleltetés")
       return(FALSE)
       
     } 
