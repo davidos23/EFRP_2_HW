@@ -76,7 +76,7 @@ calculate_correlation <-
     m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
     CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]  
-    pairedCorrelation=matrix(nrow=m,ncol=CorMatrixCol)
+    pairedCorrelation <<- matrix(nrow=m,ncol=CorMatrixCol)
     z=2
     for(i in 1:n){
       for (j in 1:n){
