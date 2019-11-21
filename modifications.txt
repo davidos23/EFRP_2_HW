@@ -1,0 +1,26 @@
+calculate_correlation():
+
+in this function we have changed the the algorithm of calculating the correlation (we use only for instead of for and while)
+changed to correlate everything with everything instead of 2 assets only
+the original team used in this code the_date variable, we let this inside 
+sometimes the variables are in Hungarian as we wanted to be consisted with the original code
+
+correlation function and matrix works like this:
+1)asset_k gets correlated with every other asset from j=1...n where j!=k
+2)you give the start date and then the function calculates the correlation until the end of the dataset!
+3)in every loop only the fixed asset_k has non-lagged values, every j!=k is lagged(+/- direction)
+4)length of the matrix paired correlation matrix is length(WTI2)-window size
+
+check_results()
+
+we have taken this function out of the code because the correlation function cannot give a value that is >|1|
+
+check_parameters()
+
+we have taken some cases out of the code:
+	one was redundant as now we correlate everything
+	we didn't take that restriction that the window size has to be at least 5
+	we have decided to build the code in a way that there is no end date , so only start date is available
+
+korrelacio()
+we have deleted this function and took it's duty to different functions
