@@ -47,8 +47,21 @@ check_parameters <-
       )
       return(FALSE)
       
-      # Leellenőrizzük, hogy a többi paramétert egész szám formátumban adta meg
-    } else if (typeof(kesleltet) != "double" ||
+      
+      
+
+    } 
+    else if (vegso_datum > adat_vegso) {
+      print(
+        paste(
+          "Kérjük olyan dátumot adjon meg, ami az elemzés intervallumába beleesik:"
+        )
+      )
+      return(FALSE)
+      
+    }
+    # Leellenőrizzük, hogy a többi paramétert egész szám formátumban adta meg    
+    else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
