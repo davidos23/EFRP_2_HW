@@ -7,6 +7,7 @@ return_maker <- function(WTI_fut)
   ## -!-this function is copied from out pprevious work because this code calculated the correlation with prices
   ## in this code i have changed ret_WTI_fut output name to WTI2 because this is the basic parameter in the original code
   #this function imports the dataset as well 
+  #random rtext
   WTI_fut <- readxl::read_excel("WTI2.xlsx")
   n <- nrow(WTI_fut)
   m <- ncol(WTI_fut)
