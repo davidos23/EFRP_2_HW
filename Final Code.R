@@ -33,9 +33,7 @@ add_parameters <- function(startDate,kesleltet,ablak_meret){
   ablak_meret <<- ablak_meret
 }
 check_parameters <-
-  function(kezdo_datum,
-           kesleltet,
-           ablak_meret) {
+  function() {
 
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
@@ -105,3 +103,10 @@ calculate_correlation <-
       MinAvgMax[i,4]=max(pairedCorrelation[i,-1])
     }
   }
+
+
+return_maker()
+add_parameters("2011-01-30",10,100)
+check_parameters()
+calculate_correlation()
+
