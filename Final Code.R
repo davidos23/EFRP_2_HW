@@ -67,9 +67,9 @@ check_parameters <-
   } 
 
 calculate_correlation <-
-  function(ablak_meret = 100,
-           kesleltet = 0,
-           the_data = WTI2) {  
+  function(ablak_meret,
+           kesleltet,
+           the_data ) {  
     vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector 
     kezdo_datum_num=as.numeric(as.Date(kezdo_datum))-as.numeric(as.Date(adat_kezdo))
     #insert adat_kezdo as i forgot it
@@ -82,7 +82,7 @@ calculate_correlation <-
       for (j in 1:n){
         if(i!=j){
           for(k in 1:m){
-            pairedCorrelation[k,z] = cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
+            pairedCorrelation[k,z] <<- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
                                          the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
@@ -91,18 +91,19 @@ calculate_correlation <-
     } # here we correlate each asset with each other
     for(k in 1:m){
       if(kezdo_datum_num!=0){
-        pairedCorrelation[k,1]=the_data[k-1+kezdo_datum_num,1]
+        pairedCorrelation[k,1]<<-the_data[k-1+kezdo_datum_num,1]
       }else{
-        pairedCorrelation[k,1]=the_data[k,1]
+        pairedCorrelation[k,1]<<-the_data[k,1]
       }
       
     } # here we fill up the corr-matrix with dates
     
     MinAvgMax<<-matrix(nrow = m,ncol=4)
     for(i in 1:CorMatrixCol){ #here we fill the average,min,max vectors to the matrix. First column is date
-      MinAvgMax[i,2]=min(pairedCorrelation[i,-1])
-      MinAvgMax[i,3]=mean(pairedCorrelation[i,-1])
-      MinAvgMax[i,4]=max(pairedCorrelation[i,-1])
+      MinAvgMax[i,2]<<-min(pairedCorrelation[i,-1])
+      MinAvgMax[i,3]<<-mean(pairedCorrelation[i,-1])
+      MinAvgMax[i,4]<<-max(pairedCorrelation[i,-1])
     }
+    return()
   }
 
