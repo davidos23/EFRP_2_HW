@@ -34,12 +34,12 @@ add_parameters <- function(startDate,kesleltet,ablak_meret){
 }
 check_parameters <-
   function() {
-
+    
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
       print("Character formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
-
+      
       # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
     } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
@@ -48,18 +48,18 @@ check_parameters <-
         )
       )
       return(FALSE)
-
+      
       # Leellenőrizzük, hogy a többi paramétert egész szám formátumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
-
+      
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
       print("Negatív a késleltetés")
       return(FALSE)
-
+      
     }
     return(TRUE)
   }
@@ -72,7 +72,7 @@ calculate_correlation <-
     #insert adat_kezdo as i forgot it
     m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
-    CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]
+    CorMatrixCol=n*(n-1)# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <<- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
     for(i in 1:n){
@@ -80,7 +80,7 @@ calculate_correlation <-
         if(i!=j){
           for(k in 1:m){
             pairedCorrelation[k,z] <<- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
-                                         the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
+                                           the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
         }
@@ -96,12 +96,13 @@ calculate_correlation <-
       class(TimeVector) <<- "Date"
     } # here we fill up the corr-matrix with dates
     CorrelationMatrix <<- data.frame(TimeVector,pairedCorrelation)
-    MinAvgMax<<-matrix(nrow = m,ncol=4)
-    for(i in 1:CorMatrixCol){ #here we fill the average,min,max vectors to the matrix. First column is date
-      MinAvgMax[i,2]<<-min(pairedCorrelation[i,-1])
-      MinAvgMax[i,3]<<-mean(pairedCorrelation[i,-1])
-      MinAvgMax[i,4]<<-max(pairedCorrelation[i,-1])
+    MinAvgMaxVal<<-matrix(nrow = m,ncol=3)
+    for(i in 1:m){ #here we fill the average,min,max vectors to the matrix. First column is date
+      MinAvgMaxVal[i,1]<<-min(pairedCorrelation[i,])
+      MinAvgMaxVal[i,2]<<-mean(pairedCorrelation[i,])
+      MinAvgMaxVal[i,3]<<-max(pairedCorrelation[i,])
     }
+    MinAvgMax<<-data.frame(TimeVector,MinAvgMaxVal)
     return()
   }
 
@@ -110,8 +111,3 @@ return_maker()
 add_parameters("2011-01-30",10,100)
 check_parameters()
 calculate_correlation()
-
-
-#typeof(as.Date(as.numeric(WTI2[2-1+kezdo_datum_num,1]),origin="1970-01-01"))
-
-
