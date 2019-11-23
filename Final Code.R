@@ -108,6 +108,44 @@ calculate_correlation <-
     return()
   }
 
+visualize <- function(day_num){
+  
+  col_list = list()
+  for(i in (1:23)){
+    for(j in (i+1):24){
+      colname = paste("CL", i ,"-CL", j)
+      col_list[(i-1)*24+j] = colname
+    }
+  }
+  col_list[sapply(col_list, is.null)] <- NULL
+  
+  colnames(CorrelationMatrix) = c("Date", col_list)
+  
+  #atirni az oszlopneveket, utana kinyerni belole adott napokra a halozatot es abrazolni
+  
+  random_nap = CorrelationMatrix[day_num,]
+  random_nap_matrix = matrix(nrow=24, ncol=24)
+  
+  list=list()
+  for(i in (1:24)){
+    label=paste("CL", i)
+    list[i]=label
+  }
+  
+  rownames(random_nap_matrix) = list
+  colnames(random_nap_matrix) = list
+  
+  for(i in (1:23)){
+    for(j in (i+1):24){
+      random_nap_matrix[i,j] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
+      random_nap_matrix[j,i] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
+    }
+  }
+  
+  
+  network_plot(random_nap_matrix)
+   
+}
 
 return_maker()
 add_parameters("2011-01-30",10,100)
