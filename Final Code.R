@@ -108,8 +108,14 @@ calculate_correlation <-
     return()
   }
 
-#plot(MinAvgMax[,1],MinAvgMax[,2:4])
+
 return_maker()
 add_parameters("2011-01-30",10,100)
 check_parameters()
 calculate_correlation()
+
+plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+
+lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
+
+lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
