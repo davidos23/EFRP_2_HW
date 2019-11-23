@@ -6,7 +6,7 @@ return_maker <- function(WTI_fut)
   ##the first column remains the same as it is our date vector, and the first row is empty as we don't have data before the first day
   ## -!-this function is copied from out pprevious work because this code calculated the correlation with prices
   ## in this code i have changed ret_WTI_fut output name to WTI2 because this is the basic parameter in the original code
-  #this function imports the dataset as well 
+  #this function imports the dataset as well
   WTI_fut <- readxl::read_excel("WTI2.xlsx")
   n <- nrow(WTI_fut)
   m <- ncol(WTI_fut)
@@ -33,15 +33,13 @@ add_parameters <- function(startDate,kesleltet,ablak_meret){
   ablak_meret <<- ablak_meret
 }
 check_parameters <-
-  function(kezdo_datum,
-           kesleltet,
-           ablak_meret) {
-    
+  function() {
+
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
       print("Character formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
-      
+
       # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
     } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
@@ -50,34 +48,33 @@ check_parameters <-
         )
       )
       return(FALSE)
-      
+
       # Leellenőrizzük, hogy a többi paramétert egész szám formátumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
-      
+
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
       print("Negatív a késleltetés")
       return(FALSE)
-      
-    } 
+
+    }
     return(TRUE)
-  } 
+  }
 
 calculate_correlation <-
-  function(ablak_meret,
-           kesleltet,
-           the_data ) {  
-    vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector 
+  function() {
+    the_data <- WTI2
+    vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector
     kezdo_datum_num=as.numeric(as.Date(kezdo_datum))-as.numeric(as.Date(adat_kezdo))
     #insert adat_kezdo as i forgot it
     m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
-    CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]  
+    CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <<- matrix(nrow=m,ncol=CorMatrixCol)
-    z=2
+    z=1
     for(i in 1:n){
       for (j in 1:n){
         if(i!=j){
@@ -89,15 +86,16 @@ calculate_correlation <-
         }
       }
     } # here we correlate each asset with each other
+    TimeVector <<- vector(length=m)
     for(k in 1:m){
       if(kezdo_datum_num!=0){
-        pairedCorrelation[k,1]<<-the_data[k-1+kezdo_datum_num,1]
+        TimeVector[k]<<-as.Date(the_data[k-1+kezdo_datum_num,1])
       }else{
-        pairedCorrelation[k,1]<<-the_data[k,1]
+        TimeVector[k]<<-as.Date(the_data[k,1])
       }
-      
+      class(TimeVector) <<- "Date"
     } # here we fill up the corr-matrix with dates
-    
+    CorrelationMatrix <<- data.frame(TimeVector,pairedCorrelation)
     MinAvgMax<<-matrix(nrow = m,ncol=4)
     for(i in 1:CorMatrixCol){ #here we fill the average,min,max vectors to the matrix. First column is date
       MinAvgMax[i,2]<<-min(pairedCorrelation[i,-1])
@@ -106,4 +104,14 @@ calculate_correlation <-
     }
     return()
   }
+
+
+return_maker()
+add_parameters("2011-01-30",10,100)
+check_parameters()
+calculate_correlation()
+
+
+#typeof(as.Date(as.numeric(WTI2[2-1+kezdo_datum_num,1]),origin="1970-01-01"))
+
 
