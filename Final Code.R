@@ -70,28 +70,28 @@ calculate_correlation <-
     vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector
     kezdo_datum_num=as.numeric(as.Date(kezdo_datum))-as.numeric(as.Date(adat_kezdo))
     #insert adat_kezdo as i forgot it
-    m <- vegso - ablak_meret-kezdo_datum_num
+    m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
     CorMatrixCol=n*(n-1)/2# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
     for(i in 1:n){
-      for (j in i:n){
-        if(i!=j){
+      for (j in (i+1):n){
+        
           for(k in 1:m){
             pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
                                           the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
-        }
+        
       }
     } # here we correlate each asset with each other
-    TimeVector <- vector(length=m)
+    TimeVector <<- vector(length=m)
     for(k in 1:m){
       if(kezdo_datum_num!=0){
-        TimeVector[k]<-as.Date(the_data[k+kezdo_datum_num+ablak_meret,1])
+        TimeVector[k]<<-as.Date(the_data[k+kezdo_datum_num+ablak_meret,1])
       }else{
-        TimeVector[k]<-as.Date(the_data[k,1])
+        TimeVector[k]<<-as.Date(the_data[k,1])
       }
       class(TimeVector) <<- "Date"
     } # here we fill up the corr-matrix with dates
@@ -148,14 +148,7 @@ visualize <- function(day_num){
 }
 
 return_maker()
-add_parameters("2011-01-30",0,20)
+add_parameters("2011-01-30",10,20)
 check_parameters()
 calculate_correlation()
-
-plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
-
-lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
-
-lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
-
-legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+visualize(3)
