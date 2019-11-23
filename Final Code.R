@@ -96,12 +96,13 @@ calculate_correlation <-
       class(TimeVector) <<- "Date"
     } # here we fill up the corr-matrix with dates
     CorrelationMatrix <<- data.frame(TimeVector,pairedCorrelation)
-    MinAvgMaxVal<-matrix(nrow = m,ncol=3)
+    MinAvgMaxVal <- matrix(nrow = m,ncol=3)
     for(i in 1:m){ #here we fill the average,min,max vectors to the matrix. First column is date
       MinAvgMaxVal[i,1]<-min(pairedCorrelation[i,])
       MinAvgMaxVal[i,2]<-mean(pairedCorrelation[i,])
       MinAvgMaxVal[i,3]<-max(pairedCorrelation[i,])
     }
+    rm(MinAvgMaxVal,pairedCorrelation)
     MinAvgMax<<-data.frame(TimeVector,MinAvgMaxVal)
     return()
   }
