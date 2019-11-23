@@ -3,7 +3,7 @@ calculate_correlation():
 in this function we have changed the the algorithm of calculating the correlation (we use only for instead of for and while)
 changed to correlate everything with everything instead of 2 assets only
 the original team used in this code the_date variable, we let this inside 
-sometimes the variables are in Hungarian as we wanted to be consisted with the original code
+sometimes the variables are in Hungarian as we wanted to be consistent with the original code
 
 correlation function and matrix works like this:
 1)asset_k gets correlated with every other asset from j=1...n where j!=k
