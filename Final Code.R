@@ -89,7 +89,7 @@ calculate_correlation <-
     TimeVector <<- vector(length=m)
     for(k in 1:m){
       if(kezdo_datum_num!=0){
-        TimeVector[k]<<-as.Date(the_data[k-1+kezdo_datum_num,1])
+        TimeVector[k]<<-as.Date(the_data[k+kezdo_datum_num+ablak_meret,1])
       }else{
         TimeVector[k]<<-as.Date(the_data[k,1])
       }
