@@ -75,15 +75,15 @@ calculate_correlation <-
     CorMatrixCol=n*(n-1)/2# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
-    for(i in 1:n){
-      for (j in i:n){
-        if(i!=j){
+    for(i in 1:(n-1)){
+      for (j in (i+1):n){
+
           for(k in 1:m){
             pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
                                            the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
-        }
+        
       }
     } # here we correlate each asset with each other
     TimeVector <<- vector(length=m)
