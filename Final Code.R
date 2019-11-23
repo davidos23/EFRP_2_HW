@@ -93,7 +93,7 @@ calculate_correlation <-
       }else{
         TimeVector[k]<<-as.Date(the_data[k,1])
       }
-      class(TimeVector) <- "Date"
+      class(TimeVector) <<- "Date"
     } # here we fill up the corr-matrix with dates
     CorrelationMatrix <<- data.frame(TimeVector,pairedCorrelation)
     MinAvgMax<<-matrix(nrow = m,ncol=4)
