@@ -73,13 +73,13 @@ calculate_correlation <-
     m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
     CorMatrixCol=n*(n-1)# this is the number of columns that contains correlations +1 as date vector [first one]
-    pairedCorrelation <<- matrix(nrow=m,ncol=CorMatrixCol)
+    pairedCorrelation <- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
     for(i in 1:n){
       for (j in 1:n){
         if(i!=j){
           for(k in 1:m){
-            pairedCorrelation[k,z] <<- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
+            pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
                                            the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
@@ -106,7 +106,7 @@ calculate_correlation <-
     return()
   }
 
-
+#plot(MinAvgMax[,1],MinAvgMax[,2:4])
 return_maker()
 add_parameters("2011-01-30",10,100)
 check_parameters()
