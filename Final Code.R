@@ -18,7 +18,7 @@ return_maker <- function(WTI_fut)
       ret_WTI_fut[i,j] <- (WTI_fut[[i,j]] / WTI_fut[[i-1,j]]) - 1
     }
   }
-  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a dÃ©tumot berakja a ret elÃ©, de lesz egy ures oszlop
+  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a détumot berakja a ret elé, de lesz egy ures oszlop
   ret_WTI_fut <- cbind(WTI_fut[,1], ret_WTI_fut)
   WTI2 <<- data.frame(ret_WTI_fut[-1,-2])
   colnames(WTI2) = colnames(WTI_fut)
@@ -37,27 +37,27 @@ check_parameters <-
     
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
-      print("Character formÃ¡tumba adja meg a kezdÅ‘ Ã©s vÃ©gdÃ¡tumokat pl: \"2010-01-01\"")
+      print("Character formátumba adja meg a kezdõ és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
       
-      # Ha karakterek, akkor megnÃ©zzÃ¼k, hogy a fÃ¡jlban megadott intervallumba esnek-e
+      # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
     } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
         paste(
-          "KÃ©rjÃ¼k olyan dÃ¡tumot adjon meg, ami az elemzÃ©s intervallumÃ¡ba beleesik:"
+          "Kérjük olyan dátumot adjon meg, ami az elemzés intervallumába beleesik:"
         )
       )
       return(FALSE)
       
-      # LeellenÅ‘rizzÃ¼k, hogy a tÃ¶bbi paramÃ©tert egÃ©sz szÃ¡m formÃ¡tumban adta meg
+      # Leellenõrizzük, hogy a többi paramétert egész szám formátumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
-      print("KÃ©rjÃ¼k a dÃ¡tumokon kÃ­vÃ¼li paramÃ©tereket egÃ©sz szÃ¡mok formÃ¡jÃ¡ban adja meg.")
+      print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
       
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
-      print("NegatÃ­v a kÃ©sleltetÃ©s")
+      print("Negatív a késleltetés")
       return(FALSE)
       
     }
@@ -70,28 +70,28 @@ calculate_correlation <-
     vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector
     kezdo_datum_num=as.numeric(as.Date(kezdo_datum))-as.numeric(as.Date(adat_kezdo))
     #insert adat_kezdo as i forgot it
-    m<- vegso - ablak_meret-kezdo_datum_num
+    m <- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
-    CorMatrixCol=n*(n-1)# this is the number of columns that contains correlations +1 as date vector [first one]
+    CorMatrixCol=n*(n-1)/2# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
     for(i in 1:n){
-      for (j in 1:n){
+      for (j in i:n){
         if(i!=j){
           for(k in 1:m){
             pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
-                                           the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
+                                          the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
         }
       }
     } # here we correlate each asset with each other
-    TimeVector <<- vector(length=m)
+    TimeVector <- vector(length=m)
     for(k in 1:m){
       if(kezdo_datum_num!=0){
-        TimeVector[k]<<-as.Date(the_data[k+kezdo_datum_num+ablak_meret,1])
+        TimeVector[k]<-as.Date(the_data[k+kezdo_datum_num+ablak_meret,1])
       }else{
-        TimeVector[k]<<-as.Date(the_data[k,1])
+        TimeVector[k]<-as.Date(the_data[k,1])
       }
       class(TimeVector) <<- "Date"
     } # here we fill up the corr-matrix with dates
@@ -144,11 +144,11 @@ visualize <- function(day_num){
   
   
   network_plot(random_nap_matrix)
-   
+  
 }
 
 return_maker()
-add_parameters("2011-01-30",10,100)
+add_parameters("2011-01-30",0,20)
 check_parameters()
 calculate_correlation()
 
@@ -159,4 +159,3 @@ lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
 lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
 
 legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
-
