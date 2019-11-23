@@ -72,7 +72,7 @@ calculate_correlation <-
     #insert adat_kezdo as i forgot it
     m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
-    CorMatrixCol=n*(n-1)+2# this is the number of columns that contains correlations +1 as date vector [first one]
+    CorMatrixCol=n*(n-1)# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <<- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
     for(i in 1:n){
@@ -97,10 +97,10 @@ calculate_correlation <-
     } # here we fill up the corr-matrix with dates
     CorrelationMatrix <<- data.frame(TimeVector,pairedCorrelation)
     MinAvgMax<<-matrix(nrow = m,ncol=4)
-    for(i in 1:CorMatrixCol){ #here we fill the average,min,max vectors to the matrix. First column is date
-      MinAvgMax[i,2]<<-min(pairedCorrelation[i,-1])
-      MinAvgMax[i,3]<<-mean(pairedCorrelation[i,-1])
-      MinAvgMax[i,4]<<-max(pairedCorrelation[i,-1])
+    for(i in 1:m){ #here we fill the average,min,max vectors to the matrix. First column is date
+      MinAvgMax[i,2]<<-min(pairedCorrelation[i,])
+      MinAvgMax[i,3]<<-mean(pairedCorrelation[i,])
+      MinAvgMax[i,4]<<-max(pairedCorrelation[i,])
     }
     return()
   }
@@ -111,7 +111,5 @@ add_parameters("2011-01-30",10,100)
 check_parameters()
 calculate_correlation()
 
-
-#typeof(as.Date(as.numeric(WTI2[2-1+kezdo_datum_num,1]),origin="1970-01-01"))
 
 
