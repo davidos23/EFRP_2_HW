@@ -119,3 +119,6 @@ plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Vari
 lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
 
 lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
+
+legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+
