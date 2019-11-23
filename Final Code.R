@@ -37,7 +37,7 @@ check_parameters <-
     
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
-      print("Character formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
+      print("Character formátumba adja meg a kezdõ és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
       
       # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
@@ -49,7 +49,7 @@ check_parameters <-
       )
       return(FALSE)
       
-      # Leellenőrizzük, hogy a többi paramétert egész szám formátumban adta meg
+      # Leellenõrizzük, hogy a többi paramétert egész szám formátumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
@@ -70,17 +70,16 @@ calculate_correlation <-
     vegso<-nrow(WTI2)-1 #-1 as one column kept for the date vector
     kezdo_datum_num=as.numeric(as.Date(kezdo_datum))-as.numeric(as.Date(adat_kezdo))
     #insert adat_kezdo as i forgot it
-    m <- vegso - ablak_meret-kezdo_datum_num
+    m<- vegso - ablak_meret-kezdo_datum_num
     n <- ncol(WTI2)-1
     CorMatrixCol=n*(n-1)/2# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
     for(i in 1:(n-1)){
       for (j in (i+1):n){
-
           for(k in 1:m){
             pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
-                                           the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
+                                          the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
         
@@ -144,19 +143,11 @@ visualize <- function(day_num){
   
   
   network_plot(random_nap_matrix)
-   
+  
 }
 
 return_maker()
-add_parameters("2011-01-30",0,20)
+add_parameters("2011-01-30",10,20)
 check_parameters()
 calculate_correlation()
-
-plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
-
-lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
-
-lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
-
-legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
-
+visualize(3)
