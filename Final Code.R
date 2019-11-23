@@ -102,8 +102,9 @@ calculate_correlation <-
       MinAvgMaxVal[i,2]<-mean(pairedCorrelation[i,])
       MinAvgMaxVal[i,3]<-max(pairedCorrelation[i,])
     }
-    rm(MinAvgMaxVal,pairedCorrelation)
+    
     MinAvgMax<<-data.frame(TimeVector,MinAvgMaxVal)
+    rm(MinAvgMaxVal,pairedCorrelation)
     return()
   }
 
