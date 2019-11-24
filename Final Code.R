@@ -107,7 +107,7 @@ calculate_correlation <-
     return()
   }
 
-visualize <- function(day_num){
+graph_plot <- function(day_num){
 
   col_list = list()
   for(i in (1:23)){
@@ -141,20 +141,55 @@ visualize <- function(day_num){
     }
   }
 
-
-  corrr::network_plot(random_nap_matrix)
+  network_plot(random_nap_matrix)
 
 }
 
-plot_mmm <-function(){
+heatmap <- function(day_num) {
+  col_list = list()
+  for(i in (1:23)){
+    for(j in (i+1):24){
+      colname = paste("CL", i ,"-CL", j)
+      col_list[(i-1)*24+j] = colname
+    }
+  }
+  col_list[sapply(col_list, is.null)] <- NULL
 
-  plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+  colnames(CorrelationMatrix) = c("Date", col_list)
 
-  lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
+  #atirni az oszlopneveket, utana kinyerni belole adott napokra a halozatot es abrazolni
 
-  lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
+  random_nap = CorrelationMatrix[day_num,]
+  random_nap_matrix = matrix(nrow=24, ncol=24)
 
-  legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+  list=list()
+  for(i in (1:24)){
+    label=paste("CL", i)
+    list[i]=label
+  }
+
+  rownames(random_nap_matrix) = list
+  colnames(random_nap_matrix) = list
+
+  for(i in (1:23)){
+    for(j in (i+1):24){
+      random_nap_matrix[i,j] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
+      random_nap_matrix[j,i] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
+    }
+  }
+
+
+  melted_cormat <- melt(random_nap_matrix, na.rm = TRUE)
+  ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+    geom_tile(color = "white")+
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                         midpoint = 0, limit = c(-1,1), space = "Lab",
+                         name="Correlation") +
+    theme_minimal()+
+    theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                     size = 12, hjust = 1))+
+    coord_fixed()
+
 }
 
 
@@ -162,5 +197,18 @@ return_maker()
 add_parameters("2011-01-30",10,20)
 check_parameters()
 calculate_correlation()
-plot_mmm()
-visualize(3)
+graph_plot(100)
+heatmap(100)
+
+plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+
+lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
+
+lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
+
+legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+
+
+library(corrr)
+library(reshape2)
+library(ggplot2)
