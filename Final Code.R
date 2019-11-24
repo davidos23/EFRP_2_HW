@@ -27,6 +27,7 @@ return_maker <- function(WTI_fut)
   return(WTI2)
 }
 
+
 add_parameters <- function(startDate,kesleltet,ablak_meret){
   kezdo_datum  <<- startDate
   kesleltet <<- kesleltet
@@ -206,12 +207,12 @@ plot_mmm <<- function(){
 }
 
 return_maker()
-add_parameters("2011-01-30",10,20)
+add_parameters("2011-01-30",20,20)
 check_parameters()
 calculate_correlation()
 
 plot_mmm()
-graph_plot(100)
+graph_plot(1)
 heatmap(100)
 
 
