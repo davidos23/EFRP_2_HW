@@ -18,7 +18,7 @@ return_maker <- function(WTI_fut)
       ret_WTI_fut[i,j] <- (WTI_fut[[i,j]] / WTI_fut[[i-1,j]]) - 1
     }
   }
-  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a détumot berakja a ret elé, de lesz egy ures oszlop
+  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a dÃ©tumot berakja a ret elÃ©, de lesz egy ures oszlop
   ret_WTI_fut <- cbind(WTI_fut[,1], ret_WTI_fut)
   WTI2 <<- data.frame(ret_WTI_fut[-1,-2])
   colnames(WTI2) = colnames(WTI_fut)
@@ -37,27 +37,27 @@ check_parameters <-
     
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
-      print("Character formátumba adja meg a kezdõ és végdátumokat pl: \"2010-01-01\"")
+      print("Character formÃ¡tumba adja meg a kezdÃµ Ã©s vÃ©gdÃ¡tumokat pl: \"2010-01-01\"")
       return(FALSE)
       
-      # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
+      # Ha karakterek, akkor megnÃ©zzÃ¼k, hogy a fÃ¡jlban megadott intervallumba esnek-e
     } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
         paste(
-          "Kérjük olyan dátumot adjon meg, ami az elemzés intervallumába beleesik:"
+          "KÃ©rjÃ¼k olyan dÃ¡tumot adjon meg, ami az elemzÃ©s intervallumÃ¡ba beleesik:"
         )
       )
       return(FALSE)
       
-      # Leellenõrizzük, hogy a többi paramétert egész szám formátumban adta meg
+      # LeellenÃµrizzÃ¼k, hogy a tÃ¶bbi paramÃ©tert egÃ©sz szÃ¡m formÃ¡tumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
-      print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
+      print("KÃ©rjÃ¼k a dÃ¡tumokon kÃ­vÃ¼li paramÃ©tereket egÃ©sz szÃ¡mok formÃ¡jÃ¡ban adja meg.")
       return(FALSE)
       
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
-      print("Negatív a késleltetés")
+      print("NegatÃ­v a kÃ©sleltetÃ©s")
       return(FALSE)
       
     }
@@ -75,9 +75,8 @@ calculate_correlation <-
     CorMatrixCol=n*(n-1)/2# this is the number of columns that contains correlations +1 as date vector [first one]
     pairedCorrelation <- matrix(nrow=m,ncol=CorMatrixCol)
     z=1
-    for(i in 1:n){
+    for(i in 1:(n-1)){
       for (j in (i+1):n){
-        
           for(k in 1:m){
             pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
                                           the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
