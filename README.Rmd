@@ -1,0 +1,45 @@
+---
+title: "Érdekességek"
+author: "Szabó Bence, Bodrácska Márk, Sklovskiy Dávid"
+date: "11/24/2019"
+output: html_document
+---
+
+Az alábbiakban megnézzük, hogy a hálózat hogyan reagál különböző paraméterezésekre, és ezek milyen érdekességeket fognak eredményezni.
+
+Az alábbi paraméterekkel éves ablakméretre és késleltetés nélkül nézzük meg a hálózatot 2011.01.20-tól kezdődően:
+```{r}
+add_parameters("2011-01-30",0,360)
+check_parameters()
+calculate_correlation()
+```
+Minimum, maximum és átlag korreláció ettől a naptól nézve 2016.12.31-ig (mivel az ablak mérete 1 év, az első adat egy évvel később mutatkozik):
+
+```{r}
+plot_mmm()
+```
+A ploton jól látszik a 0 késleltetés következménye: az egymáshoz közeli lejáratú szerződések árai között közel 1-es korreláció figyelhető meg, emiatt a maximum végig 1.
+Emellett az egymástól távolabb lejárattal rendelkezőek között kisebb a korreláció, de még a minimum sem éri el soha a 0,5-ös értéket. Azaz végig legalább közepesen erős, de többnyire erős korreláció jellemző.
+
+Az alábbi ábrán a pontok egymástól való távolsága, a kapcsolatok színe és vastagsága jelzi a korreláció erősségét.
+Ahogy a plotból is látszik, az első pár évben nagyon erős a korreláció:
+```{r}
+graph_plot(300)
+```
+
+Az élénk píros hőtérkép is ezt igazolja:
+
+```{r}
+heatmap(300)
+```
+
+2014 és 2015 gyengébb a kapcsolat, amit jelez a pontok nagyobb távolsága is, de a kapcsolat még mindig közepesen erős (szín):
+```{r}
+graph_plot(1000)
+```
+
+Az itt-ott "gyengülő korreláció" a hőtérképen is látható a világosabb cellák alakjában, de ez még mindig jóval meghaladja a 0-t:
+
+```{r}
+heatmap(1000)
+```
