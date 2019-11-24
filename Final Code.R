@@ -141,7 +141,7 @@ graph_plot <- function(day_num){
     }
   }
 
-  network_plot(random_nap_matrix)
+  corrr::network_plot(random_nap_matrix)
 
 }
 
@@ -179,36 +179,39 @@ heatmap <- function(day_num) {
   }
 
 
-  melted_cormat <- melt(random_nap_matrix, na.rm = TRUE)
-  ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-    geom_tile(color = "white")+
-    scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+  melted_cormat <- reshape2::melt(random_nap_matrix, na.rm = TRUE)
+  ggplot2::ggplot(data = melted_cormat, ggplot2::aes(Var2, Var1, fill = value))+
+    ggplot2::geom_tile(color = "white")+
+    ggplot2::scale_fill_gradient2(low = "blue", high = "red", mid = "white",
                          midpoint = 0, limit = c(-1,1), space = "Lab",
                          name="Correlation") +
-    theme_minimal()+
-    theme(axis.text.x = element_text(angle = 45, vjust = 1,
+    ggplot2::theme_minimal()+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1,
                                      size = 12, hjust = 1))+
-    coord_fixed()
+    ggplot2::coord_fixed()
 
 }
 
+plot_mmm <<- function(){
+  
+  plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+  
+  lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
+  
+  lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
+  
+  legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+  
+  
+}
 
 return_maker()
 add_parameters("2011-01-30",10,20)
 check_parameters()
 calculate_correlation()
+
+plot_mmm()
 graph_plot(100)
 heatmap(100)
 
-plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
 
-lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
-
-lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
-
-legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
-
-
-library(corrr)
-library(reshape2)
-library(ggplot2)
