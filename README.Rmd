@@ -60,12 +60,7 @@ check_parameters <-
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
       
-      # check the non-negativity of the the lagg/kesletet
-    } else if (kesleltet < 0 ) {
-      print("Negatív a késleltetés")
-      return(FALSE)
-      
-    }
+    } 
     return(TRUE)
   }
 
@@ -291,4 +286,56 @@ Az itt-ott "gyengülő korreláció" a hőtérképen is látható a világosabb 
 
 ```{r}
 heatmap(1000)
+```
+
+
+Most megpróbáljuk azonos ablakmérettel és induló dátummal, de egy nagyon kicsit emelve a késleltetést, pontosan 2 nappal:
+
+```{r}
+add_parameters("2011-01-30",2,360)
+check_parameters()
+calculate_correlation()
+```
+
+A változás drasztikus, a korrelációk nulla körül ingadoznak:
+
+```{r}
+plot_mmm()
+```
+
+A kapcsolati ábra is ezt igazolja. Még a legnagyon korrelációval rendelkező időpotban (2015) sem veszünk észre egyértelmű klasztereket, a kapcsolati vonalak színei teljesen fehérek.
+
+```{r}
+graph_plot(1080)
+```
+
+A hőtérkép minimális pozitív korrelációt mutat (nagyon halvány rózsaszín):
+
+```{r}
+heatmap(1080)
+```
+
+A korrelációs mátrixot kiszámító függvényünk úgy van megírva, hogy az output mátrixban egy CLi eszköz korrelációja csak CL(i+j)-kel van kiszámolva, CL(i-j)-kel nem. Ez késleltetés hiányában nem jelent semmit, de késleltetés jelenlétében ez azt jelenti, hogy CL(i-j) nem volt késleltetve CLi-hez képest (pl.: CL1-CL2 korrelációt találunk, de CL2-CL1-t nem).
+Ez a megoldás az ábrák átláthatósága érdekében lett kiválasztva (különben késleltetésekkel számított korrelációk kétszer lennének jelen az ábrákon).
+
+Ezért most nézzük meg az előző példát, de a másik irányba: 2 nappal később kezdjük az idősort, de késleltetésünk -2. Így megkapjuk a korrelációk másik felét is:
+
+```{r}
+add_parameters("2011-02-01",-2,360)
+check_parameters()
+calculate_correlation()
+```
+
+Nem túl meglepő módon hasonló eredményeket kapunk:
+```{r}
+plot_mmm()
+```
+
+CL1 látszólag nagyon kiszakadt a többi eszköz közül, ám erről sem tudunk sokat mondani a kapcsolati vonalak híján:
+```{r}
+graph_plot(1080)
+```
+Hőtérkép:
+```{r}
+heatmap(1080)
 ```
