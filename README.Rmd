@@ -1,11 +1,10 @@
 ---
-title: "Érdekességek"
+title: "Riport"
 author: "Szabó Bence, Bodrácska Márk, Sklovskiy Dávid"
 date: "11/24/2019"
 output: html_document
 ---
-
-```{r include=FALSE}
+```{r definition, echo=FALSE}
 return_maker <- function(WTI_fut)
 {
   ##the next function converts the raw dataset into a new one by making the returns from day n to day n + 1
@@ -24,15 +23,14 @@ return_maker <- function(WTI_fut)
       ret_WTI_fut[i,j] <- (WTI_fut[[i,j]] / WTI_fut[[i-1,j]]) - 1
     }
   }
-  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a détumot berakja a ret elé, de lesz egy ures oszlop
+  # for ciklus 2-tol megy, alapbol a ret matrix a 2 oszlopbol tolti fel. a cbind pedig a dĂ©tumot berakja a ret elĂ©, de lesz egy ures oszlop
   ret_WTI_fut <- cbind(WTI_fut[,1], ret_WTI_fut)
   WTI2 <<- data.frame(ret_WTI_fut[-1,-2])
   colnames(WTI2) = colnames(WTI_fut)
   adat_kezdo<<-WTI2[1,1]
   # View(ret_WTI_fut)
-  return(WTI2)
+  head(WTI2, n=10)
 }
-
 
 add_parameters <- function(startDate,kesleltet,ablak_meret){
   kezdo_datum  <<- startDate
@@ -41,13 +39,13 @@ add_parameters <- function(startDate,kesleltet,ablak_meret){
 }
 check_parameters <-
   function() {
-
+    
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
-      print("Character formátumba adja meg a kezdõ és végdátumokat pl: \"2010-01-01\"")
+      print("Character formátumba adja meg a kezdő és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
-
-      # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
+      
+      # Ha karakterek, akkor megnĂ©zzĂĽk, hogy a fĂˇjlban megadott intervallumba esnek-e
     } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
         paste(
@@ -55,18 +53,18 @@ check_parameters <-
         )
       )
       return(FALSE)
-
-      # Leellenõrizzük, hogy a többi paramétert egész szám formátumban adta meg
+      
+      # LeellenĂµrizzĂĽk, hogy a tĂ¶bbi paramĂ©tert egĂ©sz szĂˇm formĂˇtumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
-
+      
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
       print("Negatív a késleltetés")
       return(FALSE)
-
+      
     }
     return(TRUE)
   }
@@ -84,12 +82,13 @@ calculate_correlation <-
     z=1
     for(i in 1:(n-1)){
       for (j in (i+1):n){
-          for(k in 1:m){
-            pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
-                                          the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
-          }
-          z=z+1
-
+        
+        for(k in 1:m){
+          pairedCorrelation[k,z] <- cor(the_data[[1 + i]][(k-1+kezdo_datum_num):(k-1+kezdo_datum_num+ablak_meret)],
+                                        the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
+        }
+        z=z+1
+        
       }
     } # here we correlate each asset with each other
     TimeVector <<- vector(length=m)
@@ -108,14 +107,14 @@ calculate_correlation <-
       MinAvgMaxVal[i,2]<-mean(pairedCorrelation[i,])
       MinAvgMaxVal[i,3]<-max(pairedCorrelation[i,])
     }
-
+    
     MinAvgMax<<-data.frame(TimeVector,MinAvgMaxVal)
     rm(MinAvgMaxVal,pairedCorrelation)
     return()
   }
 
 graph_plot <- function(day_num){
-
+  
   col_list = list()
   for(i in (1:23)){
     for(j in (i+1):24){
@@ -124,23 +123,23 @@ graph_plot <- function(day_num){
     }
   }
   col_list[sapply(col_list, is.null)] <- NULL
-
+  
   colnames(CorrelationMatrix) = c("Date", col_list)
-
+  
   #atirni az oszlopneveket, utana kinyerni belole adott napokra a halozatot es abrazolni
-
+  
   random_nap = CorrelationMatrix[day_num,]
   random_nap_matrix = matrix(nrow=24, ncol=24)
-
+  
   list=list()
   for(i in (1:24)){
     label=paste("CL", i)
     list[i]=label
   }
-
+  
   rownames(random_nap_matrix) = list
   colnames(random_nap_matrix) = list
-
+  
   for(i in (1:23)){
     for(j in (i+1):24){
       random_nap_matrix[i,j] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
@@ -149,7 +148,7 @@ graph_plot <- function(day_num){
   }
 
   corrr::network_plot(random_nap_matrix)
-
+  
 }
 
 heatmap <- function(day_num) {
@@ -161,42 +160,42 @@ heatmap <- function(day_num) {
     }
   }
   col_list[sapply(col_list, is.null)] <- NULL
-
+  
   colnames(CorrelationMatrix) = c("Date", col_list)
-
+  
   #atirni az oszlopneveket, utana kinyerni belole adott napokra a halozatot es abrazolni
-
+  
   random_nap = CorrelationMatrix[day_num,]
   random_nap_matrix = matrix(nrow=24, ncol=24)
-
+  
   list=list()
   for(i in (1:24)){
     label=paste("CL", i)
     list[i]=label
   }
-
+  
   rownames(random_nap_matrix) = list
   colnames(random_nap_matrix) = list
-
+  
   for(i in (1:23)){
     for(j in (i+1):24){
       random_nap_matrix[i,j] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
       random_nap_matrix[j,i] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
     }
   }
-
-
+  
+  
   melted_cormat <- reshape2::melt(random_nap_matrix, na.rm = TRUE)
   ggplot2::ggplot(data = melted_cormat, ggplot2::aes(Var2, Var1, fill = value))+
     ggplot2::geom_tile(color = "white")+
-    ggplot2::scale_fill_gradient2(low = "blue", high = "red", mid = "white",
-                         midpoint = 0, limit = c(-1,1), space = "Lab",
+    ggplot2::scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         midpoint = 0, limit = c(-1,1), space = "Lab", 
                          name="Correlation") +
-    ggplot2::theme_minimal()+
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1,
+    ggplot2::theme_minimal()+ 
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, 
                                      size = 12, hjust = 1))+
     ggplot2::coord_fixed()
-
+  
 }
 
 plot_mmm <<- function(){
@@ -208,12 +207,53 @@ plot_mmm <<- function(){
   lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
   
   legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+  
 }
+
+
+```
+## Program bemutatása
+
+Ebben a riportban bemutatjuk elkészült munkánk. A cél a kőolaj különböző lejáratú termékeiből létrejött hálózat vizsgálata. Első lépésben a return_maker függvénnyel létrehozunk egy hozammátrixot a kapott kőolajadatokból. Látható az első 10 dátumra kapott hozamok mind a 24 lejáratra.
+```{r}
 return_maker()
+```
+Ezután hozzáadjuk a paramétereket(kezdő dátum, késleltetés, ablakméret), és ezeket ellenőrizzük. Ha valami nem stimmel, a program hibaüzenetet ír ki.
+```{r}
+add_parameters(2010-01-30,0,20)
+check_parameters()
+
+add_parameters("1990-02-07",0,20)
+check_parameters()
+
+add_parameters("2011-01-30",-5,20)
+check_parameters()
+
+add_parameters("2011-01-30",0,20)
+check_parameters()
+```
+A következő lépés a korrelációs mátrix kiszámolása. Minden eszközt mindennel összepárosítunk, a számolást a calculate_correlation függvény végzi, a mátrix után kiszámolja az adott napok átlagát, maximumát, minimumát.
+```{r}
+calculate_correlation()
+```
+A plot_mmm függvény a három idősort ábrázolja(átlag, maximum, minimum). Ezen ábra segítségével már egy kezdőleges képet kaphatunk a hálózat összekötöttségéről.
+```{r}
+plot_mmm()
+```
+Végül a hálozatot ábrázoljuk kétféle plot-tal. Ehhez ki kell választanunk egy bizonyos napot, amire meg szeretnénk nézni az adott napi hálót. Az első(a graph_plot() függvény használatával) egy gráfszerű ábra, ahol a színek és a vastagságok jelzik a korreláció erősségét.
+```{r}
+graph_plot(3)
+```
+A másik pedig egy hőtérkép, amely a korrelációs mátrix mezőit színezi be a korreláció nagyságától és irányától függően.
+```{r}
+heatmap(3)
 ```
 
 
-Az alábbiakban megnézzük, hogy a hálózat hogyan reagál különböző paraméterezésekre, és ezek milyen érdekességeket fognak eredményezni.
+
+## Elemzés
+
+A következőkben megnézzük, hogy a hálózat hogyan reagál különböző paraméterezésekre, és ezek milyen érdekességeket fognak eredményezni.
 
 Az alábbi paraméterekkel éves ablakméretre és késleltetés nélkül nézzük meg a hálózatot 2011.01.20-tól kezdődően:
 ```{r}
