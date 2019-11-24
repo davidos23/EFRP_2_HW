@@ -195,15 +195,13 @@ heatmap <- function(day_num) {
 
 plot_mmm <<- function(){
   
-  plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+  plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum", ylim=c(min(MinAvgMax[,2]),max(MinAvgMax[,4])))
   
   lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
   
   lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
   
   legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
-  
-  
 }
 
 return_maker()
