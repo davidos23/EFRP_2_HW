@@ -143,20 +143,26 @@ visualize <- function(day_num){
   }
   
   
-  network_plot(random_nap_matrix)
+  corrr::network_plot(random_nap_matrix)
    
 }
+
+plot_mmm <-function(){
+  
+  plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+  
+  lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
+  
+  lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
+  
+  legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+}
+
 
 return_maker()
 add_parameters("2011-01-30",0,20)
 check_parameters()
 calculate_correlation()
-
-plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
-
-lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
-
-lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
-
-legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+plot_mmm()
+visualize(3)
 
