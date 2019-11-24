@@ -34,12 +34,12 @@ add_parameters <- function(startDate,kesleltet,ablak_meret){
 }
 check_parameters <-
   function() {
-    
+
     # check the type of the start date
     if (typeof(kezdo_datum) != "character") {
       print("Character formátumba adja meg a kezdõ és végdátumokat pl: \"2010-01-01\"")
       return(FALSE)
-      
+
       # Ha karakterek, akkor megnézzük, hogy a fájlban megadott intervallumba esnek-e
     } else if (as.numeric(as.Date(kezdo_datum)) < as.numeric(as.Date(adat_kezdo)) ) {
       print(
@@ -48,18 +48,18 @@ check_parameters <-
         )
       )
       return(FALSE)
-      
+
       # Leellenõrizzük, hogy a többi paramétert egész szám formátumban adta meg
     } else if (typeof(kesleltet) != "double" ||
                typeof(ablak_meret) != "double") {
       print("Kérjük a dátumokon kívüli paramétereket egész számok formájában adja meg.")
       return(FALSE)
-      
+
       # check the non-negativity of the the lagg/kesletet
     } else if (kesleltet < 0 ) {
       print("Negatív a késleltetés")
       return(FALSE)
-      
+
     }
     return(TRUE)
   }
@@ -82,7 +82,7 @@ calculate_correlation <-
                                           the_data[[1 + j]][(k-1+kezdo_datum_num+kesleltet):(k-1+kezdo_datum_num+ablak_meret+kesleltet)])
           }
           z=z+1
-        
+
       }
     } # here we correlate each asset with each other
     TimeVector <<- vector(length=m)
@@ -101,14 +101,14 @@ calculate_correlation <-
       MinAvgMaxVal[i,2]<-mean(pairedCorrelation[i,])
       MinAvgMaxVal[i,3]<-max(pairedCorrelation[i,])
     }
-    
+
     MinAvgMax<<-data.frame(TimeVector,MinAvgMaxVal)
     rm(MinAvgMaxVal,pairedCorrelation)
     return()
   }
 
 graph_plot <- function(day_num){
-  
+
   col_list = list()
   for(i in (1:23)){
     for(j in (i+1):24){
@@ -117,23 +117,23 @@ graph_plot <- function(day_num){
     }
   }
   col_list[sapply(col_list, is.null)] <- NULL
-  
+
   colnames(CorrelationMatrix) = c("Date", col_list)
-  
+
   #atirni az oszlopneveket, utana kinyerni belole adott napokra a halozatot es abrazolni
-  
+
   random_nap = CorrelationMatrix[day_num,]
   random_nap_matrix = matrix(nrow=24, ncol=24)
-  
+
   list=list()
   for(i in (1:24)){
     label=paste("CL", i)
     list[i]=label
   }
-  
+
   rownames(random_nap_matrix) = list
   colnames(random_nap_matrix) = list
-  
+
   for(i in (1:23)){
     for(j in (i+1):24){
       random_nap_matrix[i,j] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
@@ -141,8 +141,8 @@ graph_plot <- function(day_num){
     }
   }
 
-  network_plot(random_nap_matrix)
-  
+  corrr::network_plot(random_nap_matrix)
+
 }
 
 heatmap <- function(day_num) {
@@ -154,41 +154,54 @@ heatmap <- function(day_num) {
     }
   }
   col_list[sapply(col_list, is.null)] <- NULL
-  
+
   colnames(CorrelationMatrix) = c("Date", col_list)
-  
+
   #atirni az oszlopneveket, utana kinyerni belole adott napokra a halozatot es abrazolni
-  
+
   random_nap = CorrelationMatrix[day_num,]
   random_nap_matrix = matrix(nrow=24, ncol=24)
-  
+
   list=list()
   for(i in (1:24)){
     label=paste("CL", i)
     list[i]=label
   }
-  
+
   rownames(random_nap_matrix) = list
   colnames(random_nap_matrix) = list
-  
+
   for(i in (1:23)){
     for(j in (i+1):24){
       random_nap_matrix[i,j] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
       random_nap_matrix[j,i] = random_nap[1,(i-1)*(24-i)+(j-i)+1]
     }
   }
-  
-  
-  melted_cormat <- melt(random_nap_matrix, na.rm = TRUE)
-  ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-    geom_tile(color = "white")+
-    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                         midpoint = 0, limit = c(-1,1), space = "Lab", 
+
+
+  melted_cormat <- reshape2::melt(random_nap_matrix, na.rm = TRUE)
+  ggplot2::ggplot(data = melted_cormat, ggplot2::aes(Var2, Var1, fill = value))+
+    ggplot2::geom_tile(color = "white")+
+    ggplot2::scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                         midpoint = 0, limit = c(-1,1), space = "Lab",
                          name="Correlation") +
-    theme_minimal()+ 
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    ggplot2::theme_minimal()+
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, vjust = 1,
                                      size = 12, hjust = 1))+
-    coord_fixed()
+    ggplot2::coord_fixed()
+
+}
+
+plot_mmm <<- function(){
+  
+  plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
+  
+  lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
+  
+  lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
+  
+  legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
+  
   
 }
 
@@ -196,20 +209,9 @@ return_maker()
 add_parameters("2011-01-30",10,20)
 check_parameters()
 calculate_correlation()
+
+plot_mmm()
 graph_plot(100)
 heatmap(100)
-
-plot(MinAvgMax[,1], MinAvgMax[,2], "l", col = "red", xlab = "Time", ylab = "Variables", main = "Mean,Minimum,Maximum")
-
-lines(MinAvgMax[,1], MinAvgMax[,3], "l", col = "blue")
-
-lines(MinAvgMax[,1], MinAvgMax[,4], "l", col="green")
-
-legend("bottomleft", legend = c("Minimum","Average","Maximum"),fill=c("red","blue","green"))
-
-
-library(corrr)
-library(reshape2)
-library(ggplot2)
 
 
