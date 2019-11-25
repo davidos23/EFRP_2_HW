@@ -339,3 +339,28 @@ Hőtérkép:
 ```{r}
 heatmap(1080)
 ```
+
+Most szűkítsük le az ablakméretet, pl.: 20 napra és vegyünk hasonlóan alacsony késleltetést:
+
+```{r}
+add_parameters("2011-02-01",1,20)
+check_parameters()
+calculate_correlation()
+```
+
+Észrevehető, hogy itt a korreláció viszont többnyire negatív:
+
+```{r}
+plot_mmm()
+```
+
+Ezt igazolja a kapcsolati ábra:
+
+```{r}
+graph_plot(1080)
+```
+
+És a hőtérkép is:
+```{r}
+heatmap(1080)
+```
